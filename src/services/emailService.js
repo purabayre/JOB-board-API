@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 // send email
 exports.sendEmail = async (to, subject, text) => {
   await transporter.sendMail({
-    from: '"Job Board" <no-reply@jobboard.com>',
+    from: "godkratos293@gmail.com",
     to,
     subject,
     text,
