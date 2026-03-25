@@ -70,6 +70,9 @@ exports.updateJob = catchAsync(async (req, res, next) => {
   if (job.employer.toString() !== req.user.id) {
     return next(new AppError("Not authorized", 403));
   }
+  if (req.body.tags && Array.isArray(req.body.tags)) {
+    job.tags = Array.from(new Set([...job.tags, ...req.body.tags]));
+  }
 
   Object.assign(job, req.body);
   await job.save();

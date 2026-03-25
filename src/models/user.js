@@ -21,7 +21,12 @@ const userSchema = new mongoose.Schema(
       enum: ["employer", "candidate"],
       required: true,
     },
-    company: String,
+    company: {
+      type: String,
+      required: function () {
+        return this.role === "employer";
+      },
+    },
   },
   { timestamps: true },
 );

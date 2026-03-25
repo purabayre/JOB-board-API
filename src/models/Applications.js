@@ -16,7 +16,10 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    receiptPath: String,
+    // receiptPath: {
+    //   type: String,
+    //   required: true,
+    // },
     status: {
       type: String,
       enum: ["pending", "reviewed", "rejected"],
@@ -25,6 +28,16 @@ const applicationSchema = new mongoose.Schema(
     appliedAt: {
       type: Date,
       default: Date.now,
+    },
+    candidate: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    job: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Job",
+      required: true,
     },
   },
   { timestamps: true },

@@ -26,6 +26,10 @@ const jobSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    deadline: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true },
 );

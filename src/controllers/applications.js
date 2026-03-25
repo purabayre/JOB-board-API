@@ -2,6 +2,8 @@ const Application = require("../models/Applications");
 const Job = require("../models/job");
 const User = require("../models/user");
 const path = require("path");
+const fs = require("fs");
+const AppError = require("../utils/AppError");
 
 const { sendEmail } = require("../services/emailService");
 const { generatePDF } = require("../services/pdfService");
@@ -9,15 +11,18 @@ const { generatePDF } = require("../services/pdfService");
 const catchAsync = require("../utils/catchAsync");
 
 // APPLY
-exports.applyToJob = catchAsync(async (req, res) => {
+exports.applyToJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.jobId);
 
-  if (!job)
-    return res.status(404).json({ success: false, error: "Job not found" });
+  if (!job) return next(new AppError("Job not found", 404));
 
   // deadline check
   if (job.deadline && new Date(job.deadline) < new Date())
-    return res.status(403).json({ success: false, error: "Deadline passed" });
+    return next(new AppError("Deadline passed", 403));
+
+  // candidate only
+  if (req.user.role !== "candidate")
+    return next(new AppError("Only candidates can apply", 403));
 
   // duplicate check
   const exists = await Application.findOne({
@@ -25,12 +30,18 @@ exports.applyToJob = catchAsync(async (req, res) => {
     candidate: req.user.id,
   });
 
-  if (exists)
-    return res.status(409).json({ success: false, error: "Already applied" });
+  if (exists) return next(new AppError("Already applied", 409));
 
-  // file check
-  if (!req.file)
-    return res.status(400).json({ success: false, error: "Resume required" });
+  // resume required
+  if (!req.file) return next(new AppError("Resume required", 400));
+
+  // role check
+  if (req.user.role !== "candidate") {
+    return next(new AppError("Only candidates can apply to jobs", 403));
+  }
+  // PDF check
+  if (!req.file.mimetype.includes("pdf"))
+    return next(new AppError("Resume must be a PDF file", 400));
 
   const application = await Application.create({
     job: job._id,
@@ -44,7 +55,7 @@ exports.applyToJob = catchAsync(async (req, res) => {
   await sendEmail(
     user.email,
     "Application Submitted",
-    `Applied for ${job.title}`,
+    `You applied for ${job.title}`,
   );
 
   res.status(201).json({
@@ -108,31 +119,37 @@ exports.deleteApplication = catchAsync(async (req, res) => {
 });
 
 // DOWNLOAD RESUME
-exports.getResume = catchAsync(async (req, res) => {
+
+exports.getResume = catchAsync(async (req, res, next) => {
   const filename = req.params.filename;
 
+  // Prevent path traversal
+  if (filename.includes(".."))
+    return next(new AppError("Invalid filename", 400));
+
+  // Find application whose resumePath ends with this filename
   const application = await Application.findOne({
-    resumePath: { $regex: filename },
+    resumePath: new RegExp(`${filename}$`),
   }).populate("job");
 
   if (!application) {
-    return res.status(404).json({
-      success: false,
-      error: "File not found",
-    });
+    return next(new AppError("File not found", 404));
   }
 
-  // allow only candidate OR employer
-  if (
-    application.candidate.toString() !== req.user.id &&
-    application.job.employer.toString() !== req.user.id
-  ) {
-    return res.status(403).json({
-      success: false,
-      error: "Not authorized",
-    });
+  // Authorization: candidate OR job employer
+  const isCandidate = application.candidate.toString() === req.user.id;
+  const isEmployer = application.job.employer.toString() === req.user.id;
+
+  if (!isCandidate && !isEmployer) {
+    return next(new AppError("Not authorized to access this resume", 403));
   }
 
   const filePath = path.resolve(application.resumePath);
+
+  // Ensure file exists
+  if (!fs.existsSync(filePath)) {
+    return next(new AppError("Resume file missing", 404));
+  }
+
   res.sendFile(filePath);
 });

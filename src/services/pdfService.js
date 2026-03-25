@@ -29,7 +29,6 @@ exports.generatePDF = (application, job, user) => {
 
     doc.fontSize(14).text(`Candidate: ${user.name}`);
     doc.text(`Job Title: ${job.title}`);
-    doc.text(`Company: ${user.company || "N/A"}`);
     doc.text(`Applied At: ${application.appliedAt}`);
 
     doc.end();
