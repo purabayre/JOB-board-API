@@ -20,7 +20,10 @@ exports.register = catchAsync(async (req, res, next) => {
   if (existingUser) {
     return next(new AppError("Email is already registered", 400));
   }
-  if (role === "employer" && !companyName) {
+  if (!name || !email || !password || !role) {
+    return next(new AppError("all fields are required", 400));
+  }
+  if (role === "employer" && !company) {
     return next(
       new AppError("Company name is required for employer accounts", 400),
     );
@@ -55,7 +58,10 @@ exports.login = catchAsync(async (req, res, next) => {
   res.json({
     success: true,
     message: "Login successful",
-    data: { accessToken },
+    data: {
+      accessToken,
+      refreshToken,
+    },
   });
 });
 

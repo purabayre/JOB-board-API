@@ -24,6 +24,13 @@ router.get(
   appController.getMyApplications,
 );
 
+router.put(
+  "/:id/updateStatus",
+  authenticate,
+  authorize("employer"),
+  appController.updateApplicationStatus,
+);
+
 router.delete(
   "/:id",
   authenticate,
@@ -31,6 +38,6 @@ router.delete(
   appController.deleteApplication,
 );
 
-router.get("/resume/:filename", authenticate, appController.getResume);
+router.get("/:id/resume", authenticate, appController.getResume);
 
 module.exports = router;
