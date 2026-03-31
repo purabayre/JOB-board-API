@@ -6,6 +6,14 @@ const authenticate = require("../middleware/authenticate");
 const authorize = require("../middleware/authorize");
 
 router.get("/", jobController.getAllJobs);
+
+router.get(
+  "/my-jobs",
+  authenticate,
+  authorize("employer"),
+  jobController.getMyJobs,
+);
+
 router.get("/:id", jobController.getJob);
 
 // employer
@@ -23,13 +31,6 @@ router.delete(
   authenticate,
   authorize("employer"),
   jobController.deleteJob,
-);
-
-router.get(
-  "/my-jobs",
-  authenticate,
-  authorize("employer"),
-  jobController.getMyJobs,
 );
 
 router.get(

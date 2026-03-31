@@ -6,31 +6,39 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
+const user = require("../models/user");
 
 exports.register = catchAsync(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(new AppError("Validation failed", 400));
+    const formatted = errors.array().map((err) => ({
+      field: err.path,
+      message: err.msg,
+    }));
+
+    return next(new AppError("Validation failed", 400, formatted));
   }
 
   const { name, email, password, role, company } = req.body;
 
-  //Check if email already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return next(new AppError("Email is already registered", 400));
-  }
   if (!name || !email || !password || !role) {
     return next(new AppError("all fields are required", 400));
   }
+
   if (role === "employer" && !company) {
     return next(
       new AppError("Company name is required for employer accounts", 400),
     );
   }
 
-  // Create user if not exists
-  const user = await User.create(req.body);
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return next(new AppError("Email is already registered", 400));
+  }
+
+  let user = await User.create(req.body);
+
+  user = await User.findById(user._id).select("-password");
 
   res.status(201).json({
     success: true,
@@ -38,7 +46,6 @@ exports.register = catchAsync(async (req, res, next) => {
     data: user,
   });
 });
-
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -81,7 +88,7 @@ exports.refresh = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.logout = catchAsync(async (req, res) => {
+exports.logout = catchAsync(async (req, res, next) => {
   res.clearCookie("refreshToken");
 
   res.json({

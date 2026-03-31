@@ -16,21 +16,6 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    resumePath: {
-      type: String,
-      required: true,
-      select: false,
-    },
-    candidate: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    job: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Job",
-      required: true,
-    },
     status: {
       type: String,
       enum: ["pending", "reviewed", "rejected"],
@@ -40,21 +25,14 @@ const applicationSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    candidate: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    job: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Job",
-      required: true,
+    receiptPath: {
+      type: String,
     },
   },
   { timestamps: true },
 );
 
-//prevent duplicate apply
+// Prevent duplicate apply
 applicationSchema.index({ job: 1, candidate: 1 }, { unique: true });
 
 module.exports = mongoose.model("Application", applicationSchema);

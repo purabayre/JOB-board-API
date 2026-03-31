@@ -10,7 +10,6 @@ exports.createJob = catchAsync(async (req, res) => {
     ...req.body,
     employer: req.user.id,
   });
-
   res.status(201).json({
     success: true,
     message: "Job created",
@@ -18,38 +17,22 @@ exports.createJob = catchAsync(async (req, res) => {
   });
 });
 
-exports.getAllJobs = catchAsync(async (req, res) => {
-  let query = Job.find();
-
-  // filters
-  if (req.query.location) {
-    query = query.find({ location: req.query.location });
-  }
-
-  if (req.query.tags) {
-    query = query.find({ tags: { $in: req.query.tags.split(",") } });
-  }
-
-  if (req.query.salaryMin || req.query.salaryMax) {
-    query = query.find({
-      salaryMin: { $gte: req.query.salaryMin || 0 },
-      salaryMax: { $lte: req.query.salaryMax || 1000000 },
-    });
-  }
-
-  const features = new APIFeatures(query, req.query).search().paginate();
+exports.getAllJobs = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Job.find(), req.query)
+    .filter()
+    .search()
+    .sort()
+    .paginate();
 
   const jobs = await features.query;
 
-  res.json({
-    success: true,
-    message: "Jobs fetched",
-    meta: features.pagination,
+  res.status(200).json({
+    status: "success",
+    results: jobs.length,
     data: jobs,
   });
 });
 
-// SINGLE JOB
 exports.getJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.id);
 

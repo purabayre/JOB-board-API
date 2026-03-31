@@ -15,9 +15,9 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Server is working");
 });
-app.use("/auth", authRoutes);
-app.use("/jobs", jobRoutes);
-app.use("/applications", applicationRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/applications", applicationRoutes);
 
 app.use(errorHandler);
 

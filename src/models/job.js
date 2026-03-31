@@ -14,7 +14,6 @@ const jobSchema = new mongoose.Schema(
     salaryMin: Number,
     salaryMax: Number,
     tags: [String],
-    deadline: Date,
 
     employer: {
       type: mongoose.Schema.Types.ObjectId,

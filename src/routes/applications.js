@@ -16,7 +16,6 @@ router.post(
   appController.applyToJob,
 );
 
-//  MY APPLICATIONS
 router.get(
   "/my-applications",
   authenticate,
@@ -38,6 +37,12 @@ router.delete(
   appController.deleteApplication,
 );
 
-router.get("/:id/resume", authenticate, appController.getResume);
+router.get(
+  "/:id/resume",
+  authenticate,
+  authorize("employer"),
+  appController.getResume,
+);
+router.get("/resume/:filename", authenticate, appController.getResumeFile);
 
 module.exports = router;
