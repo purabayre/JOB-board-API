@@ -87,7 +87,7 @@ exports.getMyApplications = catchAsync(async (req, res) => {
   });
 });
 
-exports.updateApplicationStatus = catchAsync(async (req, res) => {
+exports.updateApplicationStatus = catchAsync(async (req, res, next) => {
   const applicationId = req.params.id;
   const { status } = req.body;
 

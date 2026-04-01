@@ -17,8 +17,7 @@ exports.sendEmail = async (to, subject, html) => {
       from,
       to,
       subject,
-      // html,
-      text: "hello ",
+      html,
     });
 
     return { success: true };

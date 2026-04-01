@@ -23,7 +23,7 @@ router.get(
   appController.getMyApplications,
 );
 
-router.put(
+router.patch(
   "/:id/updateStatus",
   authenticate,
   authorize("employer"),
@@ -40,9 +40,14 @@ router.delete(
 router.get(
   "/:id/resume",
   authenticate,
-  authorize("employer"),
+  authorize("employer", "cnadidate"),
   appController.getResume,
 );
-router.get("/resume/:filename", authenticate, appController.getResumeFile);
+router.get(
+  "/resume/:filename",
+  authenticate,
+  authorize("employer"),
+  appController.getResumeFile,
+);
 
 module.exports = router;

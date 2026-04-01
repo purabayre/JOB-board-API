@@ -8,11 +8,24 @@ class APIFeatures {
   filter() {
     const queryObj = { ...this.queryString };
 
-    const excluded = ["page", "limit", "sort", "search"];
+    const excluded = ["page", "limit", "sort", "search", "salary"];
     excluded.forEach((el) => delete queryObj[el]);
 
     this.query = this.query.find(queryObj);
     this.filterObj = queryObj;
+
+    if (this.queryString.salary) {
+      const salary = Number(this.queryString.salary);
+
+      const salaryFilter = {
+        salaryMin: { $lte: salary },
+        salaryMax: { $gte: salary },
+      };
+
+      this.query = this.query.find(salaryFilter);
+
+      this.filterObj = { ...this.filterObj, ...salaryFilter };
+    }
 
     return this;
   }
@@ -34,18 +47,26 @@ class APIFeatures {
     return this;
   }
 
-  async paginate() {
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(",").join(" ");
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort("-createdAt");
+    }
+
+    return this;
+  }
+
+  // ⭐ FIXED: paginate() is now synchronous
+  paginate() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 5;
     const skip = (page - 1) * limit;
 
-    const total = await this.model.countDocuments(this.filterObj || {});
-
-    const totalPages = Math.ceil(total / limit);
-
     this.query = this.query.skip(skip).limit(limit);
 
-    this.pagination = { page, limit, total, totalPages };
+    this.pagination = { page, limit };
 
     return this;
   }

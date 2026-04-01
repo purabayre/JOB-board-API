@@ -35,12 +35,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// ✔ FIXED — added `next`
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
-  // next();
+  return next();
 });
 
 // compare password

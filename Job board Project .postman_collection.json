@@ -1,0 +1,600 @@
+{
+  "info": {
+    "_postman_id": "abda1480-acc0-4974-ac26-f8bff0466492",
+    "name": "Job board Project ",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53396092",
+    "_collection_link": "https://go.postman.co/collection/53396092-abda1480-acc0-4974-ac26-f8bff0466492?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzM3OWE2MmE5YWM2ZjJhZDA3ZDUzYiIsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzQ0MTgzNjEsImV4cCI6MTc3NDQxOTI2MX0.rGCiZq-SIp8BcdzHmuvIRsM7qjJt4ib92cP7oqXQAEA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"purab\",\r\n  \"email\": \"godkratos293@gmail.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"candidate\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"purab@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZjMjgyNTUzYzFkMjM5ZDFhOTIwOCIsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzQ5MzEwMjksImV4cCI6MTc3NDkzMTkyOX0.lXp48USCQLYZrN4t4BxrzmQYdEOVUtojLDmy0fw39AM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"nital.patel@yopmail.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/api/auth/refresh",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzBjNmY3ZTRjMGJlOTNmMDQ3ZjliMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDI0MTcyOCwiZXhwIjoxNzc0MjQyNjI4fQ.pxq8gikf8hChptPzUrRZFvOZHLeHDTqqUivj-5kHGF4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/auth/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "jobs",
+      "item": [
+        {
+          "name": "create job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzBjNmY3ZTRjMGJlOTNmMDQ3ZjliMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDQxMTA0NCwiZXhwIjoxNzc0NDExOTQ0fQ.4VuzCWu4kXGd-T2IfW9LlJShVc3KKNuusIDUfvpLDEE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Backend Developer\",\r\n  \"description\": \"Node.js developer needed\",\r\n  \"location\": \"Mumbai\",\r\n  \"tags\": [\"node\", \"mongodb\"],\r\n  \"salaryMin\": 10000,\r\n  \"salaryMax\": 60000,\r\n  \"deadline\": \"2026-04-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/jobs/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "jobs",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzBjNmY3ZTRjMGJlOTNmMDQ3ZjliMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDQxMTA0NCwiZXhwIjoxNzc0NDExOTQ0fQ.4VuzCWu4kXGd-T2IfW9LlJShVc3KKNuusIDUfvpLDEE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"tags\": [\"hello\", \"hlo\"]\r\n  \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/jobs/69c35ec513de8bf39e723019",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "jobs",
+                "69c35ec513de8bf39e723019"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzBjNmY3ZTRjMGJlOTNmMDQ3ZjliMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDQxMTA0NCwiZXhwIjoxNzc0NDExOTQ0fQ.4VuzCWu4kXGd-T2IfW9LlJShVc3KKNuusIDUfvpLDEE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/jobs/69c35ec513de8bf39e723019",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "jobs",
+                "69c35ec513de8bf39e723019"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "applications",
+      "item": [
+        {
+          "name": "apply ",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZjMjgyNTUzYzFkMjM5ZDFhOTIwOCIsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzQ0MTI1MDEsImV4cCI6MTc3NDQxMzQwMX0.bgqTl8MEh0EB9RkhoMPu8l1s7ecQ1FWvDQO8XfTq72M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "resume",
+                  "type": "file",
+                  "uuid": "5a5b68eb-206f-4adc-b3a3-fecfb8d29c5c",
+                  "src": "/C:/Users/purab/Downloads/2mb.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:2222/applications/69c0c938e4c0be93f047f9be/apply",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "applications",
+                "69c0c938e4c0be93f047f9be",
+                "apply"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get my application",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZjMjgyNTUzYzFkMjM5ZDFhOTIwOCIsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzQ5MzE0NzEsImV4cCI6MTc3NDkzMjM3MX0.crhPITTcIBtxl2i1xS7UXJ6C8F5UXuv2ZA-N3eH-6tM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/api/applications/my-applications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "api",
+                "applications",
+                "my-applications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete application",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZjMjgyNTUzYzFkMjM5ZDFhOTIwOCIsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzQ0MTI1MDEsImV4cCI6MTc3NDQxMzQwMX0.bgqTl8MEh0EB9RkhoMPu8l1s7ecQ1FWvDQO8XfTq72M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "resume",
+                  "type": "file",
+                  "uuid": "5a5b68eb-206f-4adc-b3a3-fecfb8d29c5c",
+                  "src": "/C:/Users/purab/Downloads/2mb.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:2222/applications/69c3633e457d7c8cc214b394",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "applications",
+                "69c3633e457d7c8cc214b394"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getResume",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZiOTkxNTUzYzFkMjM5ZDFhOTFmNSIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDkzNjY4OCwiZXhwIjoxNzc0OTM3NTg4fQ.2f8PA26_e9e3qV3hB2gqBn7YqaRocyhzoNpkCqCnNLs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:2222/api/applications/resume/69bfc282553c1d239d1a9208-1774936784295.pdf",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "api",
+                "applications",
+                "resume",
+                "69bfc282553c1d239d1a9208-1774936784295.pdf"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update status by employer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZiOTkxNTUzYzFkMjM5ZDFhOTFmNSIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDQyMzI4NSwiZXhwIjoxNzc0NDI0MTg1fQ.DsHWEKKMbsI3jLA3-Bl7f6XJcWQz4CZsFgmLanKEiRo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"reviewed\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/applications/69c38cda89da75a4b4e99b7c/updateStatus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "applications",
+                "69c38cda89da75a4b4e99b7c",
+                "updateStatus"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "public routes",
+      "item": [
+        {
+          "name": "get job",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmZiOTkxNTUzYzFkMjM5ZDFhOTFmNSIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDg2NzA5NiwiZXhwIjoxNzc0ODY3OTk2fQ.UzWWm5E4CLnf22J8zbsNvIzszwtIb5tRob7L2_trIsQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Backend Developer\",\r\n  \"description\": \"Node.js developer needed\",\r\n  \"location\": \"Mumbai\",\r\n  \"tags\": [\"node\", \"mongodb\"],\r\n  \"salaryMin\": 30000,\r\n  \"salaryMax\": 60000,\r\n  \"deadline\": \"26/3/2026\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/jobs/my-jobs",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "jobs",
+                "my-jobs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get single job",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YzBjNmY3ZTRjMGJlOTNmMDQ3ZjliMyIsInJvbGUiOiJlbXBsb3llciIsImlhdCI6MTc3NDQxMTA0NCwiZXhwIjoxNzc0NDExOTQ0fQ.4VuzCWu4kXGd-T2IfW9LlJShVc3KKNuusIDUfvpLDEE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Backend Developer\",\r\n  \"description\": \"Node.js developer needed\",\r\n  \"location\": \"Mumbai\",\r\n  \"tags\": [\"node\", \"mongodb\"],\r\n  \"salaryMin\": 30000,\r\n  \"salaryMax\": 60000,\r\n  \"deadline\": \"26/3/2026\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:2222/jobs/69bfbd3f553c1d239d1a91fc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "2222",
+              "path": [
+                "jobs",
+                "69bfbd3f553c1d239d1a91fc"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

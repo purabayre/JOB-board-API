@@ -18,7 +18,7 @@ exports.createJob = catchAsync(async (req, res) => {
 });
 
 exports.getAllJobs = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Job.find(), req.query)
+  const features = new APIFeatures(Job.find(), req.query, Job)
     .filter()
     .search()
     .sort()
@@ -27,9 +27,10 @@ exports.getAllJobs = catchAsync(async (req, res, next) => {
   const jobs = await features.query;
 
   res.status(200).json({
-    status: "success",
-    results: jobs.length,
+    success: true,
+    message: "Jobs fetched successfully",
     data: jobs,
+    meta: features.pagination,
   });
 });
 
