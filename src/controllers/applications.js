@@ -10,6 +10,8 @@ const { generatePDF } = require("../services/pdfService");
 
 const catchAsync = require("../utils/catchAsync");
 
+const { logHistory } = require("../utils/historyLogger");
+
 exports.applyToJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.jobId);
 
@@ -57,6 +59,12 @@ exports.applyToJob = catchAsync(async (req, res, next) => {
   const filename = req.file.filename;
   const resumeURL = `${req.protocol}://${req.get("host")}/api/applications/resume/${filename}`;
 
+  await logHistory(req.user.id, "Applied to Job", {
+    jobId: job._id,
+    jobTitle: job.title,
+    applicationId: application._id,
+  });
+
   res.status(201).json({
     success: true,
     message: "Applied successfully",
@@ -81,6 +89,8 @@ exports.getMyApplications = catchAsync(async (req, res) => {
     }
   }
 
+  await logHistory(req.user.id, "Viewed My Applications");
+
   res.json({
     success: true,
     data: apps,
@@ -97,19 +107,27 @@ exports.updateApplicationStatus = catchAsync(async (req, res, next) => {
     return next(new AppError("Application not found", 404));
   }
 
-  // Only employer of this job can update status
   if (application.job.employer.toString() !== req.user.id) {
     return next(new AppError("only employer can update status", 403));
   }
 
-  // allowed statuses (optional)
   const allowedStatuses = ["pending", "reviewed", "rejected"];
   if (status && !allowedStatuses.includes(status)) {
     return next(new AppError("invalid status", 400));
   }
 
+  const oldStatus = application.status;
+
   application.status = status || application.status;
   await application.save();
+
+  await logHistory(req.user.id, "Updated Application Status", {
+    applicationId,
+    jobId: application.job._id,
+    jobTitle: application.job.title,
+    oldStatus,
+    newStatus: application.status,
+  });
 
   res.status(200).json({
     success: true,
@@ -118,23 +136,26 @@ exports.updateApplicationStatus = catchAsync(async (req, res, next) => {
   });
 });
 
-// DELETE APPLICATION
 exports.deleteApplication = catchAsync(async (req, res) => {
   const app = await Application.findById(req.params.id).populate("job");
 
   if (!app) return next(new AppError("Application not found", 404));
 
-  // only owner
   if (app.candidate.toString() !== req.user.id) {
     return next(new AppError("not authorized", 403));
   }
 
-  // deadline check
   if (app.job.deadline && new Date(app.job.deadline) < new Date()) {
     return next(new AppError("Cannot delete after deadline", 403));
   }
 
   await app.deleteOne();
+
+  await logHistory(req.user.id, "Deleted Application", {
+    applicationId: req.params.id,
+    jobId: app.job._id,
+    jobTitle: app.job.title,
+  });
 
   res.json({
     success: true,
@@ -155,21 +176,28 @@ exports.getResume = catchAsync(async (req, res, next) => {
 
   const isEmployer =
     req.user.role === "employer" &&
-    application.job.employer.toString() === req.user.id; // 🔥 FIXED HERE
+    application.job.employer.toString() === req.user.id;
 
   if (!isCandidate && !isEmployer) {
     return next(new AppError("Not authorized", 403));
   }
+
+  OG;
+  await logHistory(req.user.id, "Viewed Resume", {
+    applicationId: application._id,
+    jobId: application.job._id,
+    jobTitle: application.job.title,
+  });
 
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", "inline");
 
   res.sendFile(path.resolve(application.resumePath));
 });
+
 exports.getResumeFile = catchAsync(async (req, res, next) => {
   const { filename } = req.params;
 
-  // Find application that owns this resume
   const application = await Application.findOne({
     resumePath: { $regex: filename + "$" },
   })
@@ -184,13 +212,20 @@ exports.getResumeFile = catchAsync(async (req, res, next) => {
 
   const isEmployer =
     req.user.role === "employer" &&
-    application.job.employer.toString() === req.user.id; // 🔥 FIXED HERE
+    application.job.employer.toString() === req.user.id;
 
   if (!isCandidate && !isEmployer) {
     return next(new AppError("Not authorized", 403));
   }
 
   const filePath = path.resolve(application.resumePath);
+
+  await logHistory(req.user.id, "Downloaded Resume File", {
+    filename,
+    applicationId: application._id,
+    jobId: application.job._id,
+    jobTitle: application.job.title,
+  });
 
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", "inline");

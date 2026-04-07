@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const jobRoutes = require("./routes/jobs");
 const applicationRoutes = require("./routes/applications");
+const historyRoutes = require("./routes/history");
 
 const errorHandler = require("./middleware/errorHandler");
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/history", historyRoutes);
 
 app.use(errorHandler);
 

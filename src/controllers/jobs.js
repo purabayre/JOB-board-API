@@ -5,11 +5,19 @@ const APIFeatures = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/AppError");
 
+const { logHistory } = require("../utils/historyLogger");
+
 exports.createJob = catchAsync(async (req, res) => {
   const job = await Job.create({
     ...req.body,
     employer: req.user.id,
   });
+
+  await logHistory(req.user.id, "Created Job", {
+    jobId: job._id,
+    title: job.title,
+  });
+
   res.status(201).json({
     success: true,
     message: "Job created",
@@ -26,6 +34,10 @@ exports.getAllJobs = catchAsync(async (req, res, next) => {
 
   const jobs = await features.query;
 
+  await logHistory(req.user.id, "Viewed All Jobs", {
+    filters: req.query,
+  });
+
   res.status(200).json({
     success: true,
     message: "Jobs fetched successfully",
@@ -38,6 +50,11 @@ exports.getJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.id);
 
   if (!job) return next(new AppError("Job not found", 404));
+
+  await logHistory(req.user.id, "Viewed Job", {
+    jobId: job._id,
+    title: job.title,
+  });
 
   res.json({
     success: true,
@@ -54,12 +71,22 @@ exports.updateJob = catchAsync(async (req, res, next) => {
   if (job.employer.toString() !== req.user.id) {
     return next(new AppError("Not authorized", 403));
   }
+
+  const oldJob = job.toObject();
+
   if (req.body.tags && Array.isArray(req.body.tags)) {
     job.tags = Array.from(new Set([...job.tags, ...req.body.tags]));
   }
 
   Object.assign(job, req.body);
   await job.save();
+
+  await logHistory(req.user.id, "Updated Job", {
+    jobId: job._id,
+    title: job.title,
+    old: oldJob,
+    new: job,
+  });
 
   res.json({
     success: true,
@@ -79,6 +106,11 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
 
   await job.deleteOne();
 
+  await logHistory(req.user.id, "Deleted Job", {
+    jobId: req.params.id,
+    title: job.title,
+  });
+
   res.json({
     success: true,
     message: "Job deleted",
@@ -87,6 +119,8 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
 
 exports.getMyJobs = catchAsync(async (req, res) => {
   const jobs = await Job.find({ employer: req.user.id });
+
+  await logHistory(req.user.id, "Viewed My Jobs");
 
   res.json({
     success: true,
@@ -105,6 +139,12 @@ exports.getJobApplications = catchAsync(async (req, res, next) => {
   }
 
   const apps = await Application.find({ job: job._id });
+
+  await logHistory(req.user.id, "Viewed Job Applications", {
+    jobId: job._id,
+    title: job.title,
+    count: apps.length,
+  });
 
   res.json({
     success: true,
