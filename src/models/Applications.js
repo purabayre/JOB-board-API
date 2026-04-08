@@ -12,26 +12,29 @@ const applicationSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    resumePath: {
-      type: String,
-      required: true,
-    },
+
+    resumePath: { type: String, required: true },
+
     status: {
       type: String,
       enum: ["pending", "reviewed", "rejected"],
       default: "pending",
     },
-    appliedAt: {
-      type: Date,
-      default: Date.now,
-    },
-    receiptPath: {
-      type: String,
-    },
+
+    appliedAt: { type: Date, default: Date.now },
+    receiptPath: { type: String },
+
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
 
 applicationSchema.index({ job: 1, candidate: 1 }, { unique: true });
+
+applicationSchema.pre(/^find/, function (next) {
+  this.where({ isDeleted: false });
+  next();
+});
 
 module.exports = mongoose.model("Application", applicationSchema);

@@ -7,25 +7,32 @@ const historySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     action: {
       type: String,
       required: true,
     },
+
     details: {
       type: Object,
       default: {},
     },
-    deletedAt: {
+
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedAt: {
       type: Date,
-      default: new Date(),
+      default: null,
     },
   },
   { timestamps: true },
 );
 
-historySchema.pre(/^find/, function (next) {
-  this.where({ deletedAt: null });
-  // return next();
-});
+// historySchema.pre(/^find/, function (next) {
+//   this.where({ isArchived: false });
+//   // next();
+// });
 
 module.exports = mongoose.model("History", historySchema);

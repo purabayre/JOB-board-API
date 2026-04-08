@@ -1,9 +1,7 @@
 const cron = require("node-cron");
 const History = require("../models/history");
 
-cron.schedule("0 0 */7 * *", async () => {
-  console.log("marked as deleted");
-
+cron.schedule("* * * * *", async () => {
   try {
     const getDeleteDate = new Date();
     getDeleteDate.setDate(getDeleteDate.getDate() - 7);
@@ -12,6 +10,8 @@ cron.schedule("0 0 */7 * *", async () => {
       { createdAt: { $lt: getDeleteDate } },
       { deletedAt: new Date() },
     );
+
+    console.log("Cron executed");
   } catch (err) {
     console.log(err);
   }

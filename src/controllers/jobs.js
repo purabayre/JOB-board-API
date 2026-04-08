@@ -38,6 +38,11 @@ exports.getAllJobs = catchAsync(async (req, res, next) => {
     filters: req.query,
   });
 
+  await Job.findByIdAndUpdate(jobId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
+
   res.status(200).json({
     success: true,
     message: "Jobs fetched successfully",
@@ -87,7 +92,10 @@ exports.updateJob = catchAsync(async (req, res, next) => {
     old: oldJob,
     new: job,
   });
-
+  await Job.findByIdAndUpdate(jobId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
   res.json({
     success: true,
     message: "Job updated",
@@ -111,6 +119,11 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
     title: job.title,
   });
 
+  await Job.findByIdAndUpdate(jobId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
+
   res.json({
     success: true,
     message: "Job deleted",
@@ -121,6 +134,11 @@ exports.getMyJobs = catchAsync(async (req, res) => {
   const jobs = await Job.find({ employer: req.user.id });
 
   await logHistory(req.user.id, "Viewed My Jobs");
+
+  await Job.findByIdAndUpdate(jobId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
 
   res.json({
     success: true,
@@ -144,6 +162,11 @@ exports.getJobApplications = catchAsync(async (req, res, next) => {
     jobId: job._id,
     title: job.title,
     count: apps.length,
+  });
+
+  await Job.findByIdAndUpdate(jobId, {
+    isDeleted: true,
+    deletedAt: new Date(),
   });
 
   res.json({

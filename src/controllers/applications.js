@@ -65,6 +65,11 @@ exports.applyToJob = catchAsync(async (req, res, next) => {
     applicationId: application._id,
   });
 
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
+
   res.status(201).json({
     success: true,
     message: "Applied successfully",
@@ -90,6 +95,11 @@ exports.getMyApplications = catchAsync(async (req, res) => {
   }
 
   await logHistory(req.user.id, "Viewed My Applications");
+
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
 
   res.json({
     success: true,
@@ -129,6 +139,11 @@ exports.updateApplicationStatus = catchAsync(async (req, res, next) => {
     newStatus: application.status,
   });
 
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
+  });
+
   res.status(200).json({
     success: true,
     message: "Application status updated",
@@ -155,6 +170,11 @@ exports.deleteApplication = catchAsync(async (req, res) => {
     applicationId: req.params.id,
     jobId: app.job._id,
     jobTitle: app.job.title,
+  });
+
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
   });
 
   res.json({
@@ -187,6 +207,11 @@ exports.getResume = catchAsync(async (req, res, next) => {
     applicationId: application._id,
     jobId: application.job._id,
     jobTitle: application.job.title,
+  });
+
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
   });
 
   res.setHeader("Content-Type", "application/pdf");
@@ -225,6 +250,11 @@ exports.getResumeFile = catchAsync(async (req, res, next) => {
     applicationId: application._id,
     jobId: application.job._id,
     jobTitle: application.job.title,
+  });
+
+  await Application.findByIdAndUpdate(appId, {
+    isDeleted: true,
+    deletedAt: new Date(),
   });
 
   res.setHeader("Content-Type", "application/pdf");
