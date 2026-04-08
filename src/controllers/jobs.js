@@ -13,6 +13,8 @@ exports.createJob = catchAsync(async (req, res) => {
     employer: req.user.id,
   });
 
+  const jobId = req.params.id;
+
   await logHistory(req.user.id, "Created Job", {
     jobId: job._id,
     title: job.title,
@@ -33,14 +35,10 @@ exports.getAllJobs = catchAsync(async (req, res, next) => {
     .paginate();
 
   const jobs = await features.query;
+  const jobId = req.params.id;
 
   await logHistory(req.user.id, "Viewed All Jobs", {
     filters: req.query,
-  });
-
-  await Job.findByIdAndUpdate(jobId, {
-    isDeleted: true,
-    deletedAt: new Date(),
   });
 
   res.status(200).json({
@@ -53,6 +51,7 @@ exports.getAllJobs = catchAsync(async (req, res, next) => {
 
 exports.getJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.id);
+  const jobId = req.params.id;
 
   if (!job) return next(new AppError("Job not found", 404));
 
@@ -61,6 +60,10 @@ exports.getJob = catchAsync(async (req, res, next) => {
     title: job.title,
   });
 
+  await Job.findByIdAndUpdate(jobId, {
+    isArchived: true,
+    archivedAt: new Date(),
+  });
   res.json({
     success: true,
     message: "Job fetched",
@@ -70,6 +73,7 @@ exports.getJob = catchAsync(async (req, res, next) => {
 
 exports.updateJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.id);
+  const jobId = req.params.id;
 
   if (!job) return next(new AppError("Job not found", 404));
 
@@ -92,10 +96,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
     old: oldJob,
     new: job,
   });
-  await Job.findByIdAndUpdate(jobId, {
-    isDeleted: true,
-    deletedAt: new Date(),
-  });
+
   res.json({
     success: true,
     message: "Job updated",
@@ -105,6 +106,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
 
 exports.deleteJob = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.id);
+  const jobId = req.params.id;
 
   if (!job) return next(new AppError("Job not found", 404));
 
@@ -119,11 +121,6 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
     title: job.title,
   });
 
-  await Job.findByIdAndUpdate(jobId, {
-    isDeleted: true,
-    deletedAt: new Date(),
-  });
-
   res.json({
     success: true,
     message: "Job deleted",
@@ -132,13 +129,9 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
 
 exports.getMyJobs = catchAsync(async (req, res) => {
   const jobs = await Job.find({ employer: req.user.id });
+  const jobId = req.params.id;
 
   await logHistory(req.user.id, "Viewed My Jobs");
-
-  await Job.findByIdAndUpdate(jobId, {
-    isDeleted: true,
-    deletedAt: new Date(),
-  });
 
   res.json({
     success: true,
@@ -149,6 +142,7 @@ exports.getMyJobs = catchAsync(async (req, res) => {
 
 exports.getJobApplications = catchAsync(async (req, res, next) => {
   const job = await Job.findById(req.params.jobId);
+  const jobId = req.params.id;
 
   if (!job) return next(new AppError("Job not found", 404));
 
@@ -162,11 +156,6 @@ exports.getJobApplications = catchAsync(async (req, res, next) => {
     jobId: job._id,
     title: job.title,
     count: apps.length,
-  });
-
-  await Job.findByIdAndUpdate(jobId, {
-    isDeleted: true,
-    deletedAt: new Date(),
   });
 
   res.json({

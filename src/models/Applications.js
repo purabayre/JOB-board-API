@@ -21,11 +21,22 @@ const applicationSchema = new mongoose.Schema(
       default: "pending",
     },
 
-    appliedAt: { type: Date, default: Date.now },
-    receiptPath: { type: String },
+    appliedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    receiptPath: {
+      type: String,
+    },
 
-    isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date, default: null },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -33,7 +44,7 @@ const applicationSchema = new mongoose.Schema(
 applicationSchema.index({ job: 1, candidate: 1 }, { unique: true });
 
 applicationSchema.pre(/^find/, function (next) {
-  this.where({ isDeleted: false });
+  this.where({ isArchived: false });
   next();
 });
 

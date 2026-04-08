@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const History = require("../models/history");
 
 exports.logHistory = async (userId, action, details = {}) => {
@@ -7,8 +8,7 @@ exports.logHistory = async (userId, action, details = {}) => {
       action,
       details,
     });
-    History.save();
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
   }
 };
