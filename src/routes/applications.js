@@ -40,7 +40,7 @@ router.delete(
 router.get(
   "/:id/resume",
   authenticate,
-  authorize("employer", "cnadidate"),
+  authorize("employer", "candidate"),
   appController.getResume,
 );
 router.get(

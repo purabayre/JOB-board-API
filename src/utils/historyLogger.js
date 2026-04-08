@@ -7,7 +7,8 @@ exports.logHistory = async (userId, action, details = {}) => {
       action,
       details,
     });
+    History.save();
   } catch (err) {
-    console.log("History log error:", err.message);
+    console.log(err.message);
   }
 };
