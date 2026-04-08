@@ -30,9 +30,9 @@ const historySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// historySchema.pre(/^find/, function (next) {
-//   this.where({ isArchived: false });
-//   // next();
-// });
+historySchema.pre(/^find/, function () {
+  this.where({ isArchived: false });
+  //   // next();
+});
 
 module.exports = mongoose.model("History", historySchema);
