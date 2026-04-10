@@ -1,16 +1,18 @@
 const cron = require("node-cron");
 const History = require("../models/history");
 
-const task = cron.schedule("*/10 * * * * *", async () => {
+cron.schedule("*/10 * * * * *", async () => {
   try {
     const getUpdateDate = new Date();
+    getUpdateDate.setDate(getUpdateDate.getDate() - 7);
 
     const result = await History.updateMany(
-      { isArchived: true },
       {
-        $set: {
-          archivedAt: getUpdateDate,
-        },
+        createdAt: { $lt: getUpdateDate },
+        isDeleted: false,
+      },
+      {
+        $set: { isDeleted: true },
       },
     );
 
